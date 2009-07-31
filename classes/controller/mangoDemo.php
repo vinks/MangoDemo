@@ -9,6 +9,11 @@ class Controller_MangoDemo extends Controller_Template {
 		$this->template->content = View::factory('mango/intro.html');
 	}
 
+	public function action_demo0()
+	{
+		$this->template->content = View::factory('mango/columns.html');
+	}
+
 	public function action_demo1()
 	{
 		$this->template->bind('content',$content);
@@ -58,7 +63,7 @@ class Controller_MangoDemo extends Controller_Template {
 		$user = Mango::factory('user');
 
 		// validate post data and try to save user
-		if($user->validate($post,$errors,TRUE))
+		if($user->validate($post,TRUE))
 		{
 			// user saved
 			$content .= Kohana::debug($user->as_array());
@@ -79,7 +84,7 @@ class Controller_MangoDemo extends Controller_Template {
 		}
 		else
 		{
-			$content = 'invalid user data' . Kohana::debug($errors);
+			$content = 'invalid user data' . Kohana::debug($post->errors(TRUE));
 		}
 
 		// clean up (because account has_many users, the users will be removed too)
@@ -407,20 +412,19 @@ class Controller_MangoDemo extends Controller_Template {
 		$content = '';
 		
 		// let's simulate a load from DB
-		// notice the array structure - it has to be predefined
 		$account = Mango::factory('account',array(
 			'_id'=>1,
 			'name'=>'test',
 			'report' => array(
 				'total' => 5,
 				'blog1' => array(
-					'views' => 0,
-					'comments'=> 0
+					'views' => 4,
+					'comments'=> 3
 				)
 			)
 		));
 		
-		// but now, atomic counters are easy:
+		// atomic counters are easy:
 		
 		$account->report['total']->increment();
 		$account->report['blog1']['views']->increment();
