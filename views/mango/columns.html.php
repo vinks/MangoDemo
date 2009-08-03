@@ -78,7 +78,7 @@ Numeric types support the optional 'min_value' and 'max_value' setting to indica
 <h3> (Associative) Arrays and Sets </h3>
 Please note the naming difference in comparison to MongoDB - PHP (associative) arrays are morel ike MongoDB objects, and 'sets' (non associative arrays) are more like arrays in MongoDB.<br>
 
-When dealing with (changes in) multidimensional arrays, be sure to set the type_hint key, to 'array', 'set' or 'auto' (tries to detect type of array). This way, embedded changes are correctly updated. If you don't use embedded changes, you don't have to set the type_hint.<br>
+When dealing with (changes in) multidimensional arrays, be sure to set the type_hint key, to 'array' or 'set'. This way, embedded changes are correctly updated. If you don't use embedded changes, you don't have to set the type_hint.<br>
 EG:<br>
 <pre>$object->array = array( 'a' => array('b' => 'c') );
 $object->save();</pre>
