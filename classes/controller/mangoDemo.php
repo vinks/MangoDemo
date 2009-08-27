@@ -153,13 +153,13 @@ class Controller_MangoDemo extends Controller_Template {
 		$comment->time = time();
 
 		// to add a comment to blog (atomic) you can choose:
-		$blog->add($comment); // OR $blog->comments[] = $comment;
+		$blog->add('comment',$comment); // OR $blog->comments[] = $comment;
 
 		// save blog 
 		$blog->save(); 
 
 		// remove comment
-		$blog->remove($comment); // OR unset($blog->comments[0]);
+		$blog->remove('comment',$comment); // OR unset($blog->comments[0]);
 
 		// save blog
 		$blog->save();
@@ -174,7 +174,7 @@ class Controller_MangoDemo extends Controller_Template {
 		$comment2->time = time();
 
 		// add a second comment
-		$blog->comments[] = $comment2; // or $blog->add($comment);
+		$blog->comments[] = $comment2; // or $blog->add('comment',$comment);
 
 		$blog->save();
 
@@ -228,7 +228,7 @@ class Controller_MangoDemo extends Controller_Template {
 		$group1->save();
 
 		// add HABTM relationship between $user and $group1
-		$user->add($group1);
+		$user->add('group',$group1);
 
 		//SAVE BOTH OBJECTS
 		$user->save();
