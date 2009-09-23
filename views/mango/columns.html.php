@@ -41,6 +41,11 @@ Numeric types support the optional 'min_value' and 'max_value' setting to indica
 		<td>A string value, with optional min_length and max_length settings, that are (like with numeric values) used when setting and validating</td>
 		<td><pre>'username' => array('type'=>'string','min_length'=>3,'max_length'=>10)</pre></td>
 	</tr>
+	<tr>
+		<td>Email</td>
+		<td>Requires a (valid) emailaddress</td>
+		<td><pre>'email' => array('type'=>'email')</pre></td>
+	</tr>
 </table>
 
 <h3> Boolean </h3>
@@ -56,12 +61,12 @@ Numeric types support the optional 'min_value' and 'max_value' setting to indica
 <table border=1>
 	<tr>
 		<td>has_one</td>
-		<td>An embedded mango object - column name should correspond the object_name.</td>
+		<td>An embedded mango object - column name should correspond the object_name or use the 'model' key to specify a model name</td>
 		<td><pre>'account' => array('type'=>'has_one')</pre></td>
 	</tr>
 	<tr>
 		<td>has_many</td>
-		<td>An embedded set of mango objects - column name should be the embedded object(s) object_name in plural.</td>
+		<td>An embedded set of mango objects - column name should be the embedded object(s) object_name in plural, or use the 'model' key to specify a model name (in plural)</td>
 		<td><pre>'comments' => array('type'=>'has_many')</pre></td>
 	</tr>
 </table>

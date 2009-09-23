@@ -2,18 +2,14 @@
 
 class Model_Spyker extends Model_Car {
 
-	public function __construct($id = NULL)
-	{
-		parent::__construct($id);
-		$this->car_type = 1;
-	}
+	protected $_car_type = 1;
 
 	// !! With extending classes - specify columns and relations in this method !!
-	public function set_model_definition()
+	protected function set_model_definition()
 	{
 		// Specify the columns/relations specific for this class
 		$this->_set_model_definition(array(
-			'_columns' => array(
+			'_fields' => array(
 				'spyker_data' => array('type'=>'string')
 			)
 		));
