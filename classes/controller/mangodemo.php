@@ -504,6 +504,43 @@ class Controller_MangoDemo extends Controller_Template {
 		}
 	}
 
+	public function action_demo10()
+	{
+		$blog = Mango::factory('blog');
+
+		// Make some data invalid to see validation error
+
+		$data = array(
+			'title'        => 'Title',
+			'text'         => 'texxt',
+			'time_written' => time(),
+			'user_id'      => 12,
+			'comments'     => array(
+				array(
+					'name'    => 'N1', // this title will now fail the min_length = 4 rule
+					'comment' => 'c1',
+					'time'    => time()
+				),
+				array(
+					'name'    => 'N2asa',
+					'comment' => 'c2',
+					'time'    => time()
+				)
+			)
+		);
+
+		try
+		{
+			$data = $blog->check($data);
+
+			echo Kohana::debug('Validation success!',$data);
+		}
+		catch(Validate_Exception $e)
+		{
+			echo Kohana::debug('Validation failed', $e->model . ' (' . $e->seq .')', $e->array->errors());
+		}
+	}
+
 	public function action_demo12()
 	{
 		$this->template->bind('content',$content);

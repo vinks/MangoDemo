@@ -48,7 +48,8 @@ however, if you use MongoDB in production, don't forget to set appropriate keys,
 	<li><?php echo html::anchor('mangoDemo/demo6','Array management');?></li>
 	<li><?php echo html::anchor('mangoDemo/demo7','Some more atomic examples');?></li>
 	<li><?php echo html::anchor('mangoDemo/demo8','Multidimensional array of counters');?></li>
-	<li><?php echo html::anchor('mangoDemo/demo9','First steps with extending classes (similar to Class Table Inheritance)');?></li>
+	<li><?php echo html::anchor('mangoDemo/demo9','Class Table Inheritance like functionality');?></li>
+	<li><?php echo html::anchor('mangoDemo/demo10','Recursive validation (validating object data including embedded object data)');?></li>
 </ol>
 
 <i>MangoQueue</i>

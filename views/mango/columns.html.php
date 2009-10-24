@@ -107,6 +107,15 @@ Other values for type_hint can be 'counter' (supports a (multidimensional) array
 	</tr>
 </table>
 
+<h3>Mixed</h3>
+<table border=1>
+	<tr>
+		<td>mixed</td>
+		<td>Accepts anything (string/integers/arrays) except objects</td>
+		<td><pre>'data' => array('type'=>'mixed')</pre></td>
+	</tr>
+</table>
+
 <h3>Additional column settings</h3>
 These settings can be added to each column type
 <table border=1>
