@@ -1,13 +1,10 @@
-<b>MangoDB - Mango - MangoQueue</b><Br><br>
+<b>MangoDB - Mango</b><Br><br>
 
 <i>MangoDB</i><br>
-A wrapper for Mongo / MongoDb / MongoCollection - used in Mango & MangoQueue, but can also be used separately if you don't need the features of Mango/MangoQueue<br><br>
+A wrapper for Mongo / MongoDb / MongoCollection - used in Mango, but can also be used separately if you don't need the features of Mango<br><br>
 
 <i>Mango</i><br>
 A ORM/ActiveRecord like library adding some relational features to MongoDB (more info below).<br><br>
-
-<i>MangoQueue</i><br>
-A simple set/get queue on top of MongoDB (see demos).<hr>
 
 <b>Mango</b><br>
 This is a simple demo showing some features of the Mango library.<br><br>
@@ -50,11 +47,4 @@ however, if you use MongoDB in production, don't forget to set appropriate keys,
 	<li><?php echo html::anchor('mangoDemo/demo8','Multidimensional array of counters');?></li>
 	<li><?php echo html::anchor('mangoDemo/demo9','Class Table Inheritance like functionality');?></li>
 	<li><?php echo html::anchor('mangoDemo/demo10','Recursive validation (validating object data including embedded object data)');?></li>
-</ol>
-
-<i>MangoQueue</i>
-<ol>
-	<li><?php echo html::anchor('mangoDemo/demo12','MangoQueue demo');?></li>
-	<li><?php echo html::anchor('mangoDemo/demo13','Add 20 items to queue (then run a few times demo14 at the same time (in different browsers) to test atomicity)');?></li>
-	<li><?php echo html::anchor('mangoDemo/demo14','Retrieve all items from queue (with a 1 sec delay between each item)');?></li>
 </ol>
