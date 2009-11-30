@@ -540,4 +540,32 @@ class Controller_MangoDemo extends Controller_Template {
 			echo Kohana::debug('Validation failed', $e->model . ' (' . $e->seq .')', $e->array->errors());
 		}
 	}
+
+	public function action_demo11()
+	{
+		// create 2 different blog entries with different titles
+		$blog1 = Mango::factory('blog', array(
+			'title'        => 'title1',
+			'text'         => 'text1',
+			'time_written' => time()
+		))->create();
+
+		$blog2 = Mango::factory('blog', array(
+			'title'        => 'title2',
+			'text'         => 'text2',
+			'time_written' => time()
+		))->create();
+
+		$db = $blog2->db();
+
+		// use a multiple update to change title of all blogs at once
+		$db->update('blogs', array(), array('$set'=> array('title'=>'title3')), array('multiple' => true));
+
+		// check and delete
+		foreach( Mango::factory('blog')->load(FALSE) as $blog)
+		{
+			echo Kohana::debug($blog->as_array());
+			$blog->delete();
+		}
+	}
 }
