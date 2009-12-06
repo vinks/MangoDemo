@@ -33,7 +33,7 @@ MongoDB !== RDBMS. Not all features can be replicated in MongoDB. Please take no
 </ul>
 <hr>
 <b>Demos</b> (note: you don't have to create any database/collections to run these demos, mongo creates dbs/collections automatically whenever something is added to them,
-however, if you use MongoDB in production, don't forget to set appropriate keys, and when done playing with these demos, you might want to drop all collections/clean the database).<br><br>
+however, if you use MongoDB in production, don't forget to set appropriate indexes, and when done playing with these demos, you might want to drop all collections/clean the database).<br><br>
 <i>Mango</i>
 <ol>
 	<li><?php echo html::anchor('mangoDemo/demo0','Column definition : how to');?></li>
