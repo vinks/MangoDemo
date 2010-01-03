@@ -48,4 +48,5 @@ however, if you use MongoDB in production, don't forget to set appropriate index
 	<li><?php echo html::anchor('mangoDemo/demo9','Class Table Inheritance like functionality');?></li>
 	<li><?php echo html::anchor('mangoDemo/demo10','Recursive validation (validating object data including embedded object data)');?></li>
 	<li><?php echo html::anchor('mangoDemo/demo11','Multiple updates');?></li>
+	<li><?php echo html::anchor('mangoDemo/demo12','$unset and $set with array indices (MongoDB 1.3 features)');?></li>
 </ol>

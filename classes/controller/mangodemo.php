@@ -224,9 +224,15 @@ class Controller_MangoDemo extends Controller_Template {
 		))->create();
 
 		// create user
-		$user = Mango::factory('user',array(
+		$user1 = Mango::factory('user',array(
 			'role' => 'manager',
 			'email' => 'user@domain.com',
+			'account_id' => $account->_id
+		))->create();
+
+		$user2 = Mango::factory('user',array(
+			'role' => 'manager',
+			'email' => 'user2@domain.com',
 			'account_id' => $account->_id
 		))->create();
 
@@ -234,26 +240,43 @@ class Controller_MangoDemo extends Controller_Template {
 			'name' => 'Group1'
 		))->create();
 
-		// add HABTM relationship between $user and $group1
-		$user->add($group1);
+		$group2 = Mango::factory('group',array(
+			'name' => 'Group2'
+		))->create();
 
-		//SAVE BOTH OBJECTS
-		$user->update();
+		// add HABTM relationship between users and groups
+		$user1->add($group1);
+		$user1->add($group2);
+		$user2->add($group1);
+		$user2->add($group2);
+
+		//SAVE ALL OBJECTS
+		$user1->update();
+		$user2->update();
 		$group1->update();
+		$group2->update();
 
-		$content .= Kohana::debug($user->as_array(),$group1->as_array());
+		$content .= Kohana::debug('two relations',$user1->as_array(),$group1->as_array());
 
-		// Clean up
+		// delete group 2 - this should remove references from both users
+		$group2->delete();
+
+		$user1->reload();
+		$user2->reload();
+
+		$content .= Kohana::debug('only one relation',$user1->as_array(),$user2->as_array());
+
+		// Clean up - this should delete account -> thereby both users
+		// and thereby clean user refs from group1
 		$account->delete();
 
 		// The $group1 object will still exist, although it's related $user is removed
 		// lets check if the relationship is gone too:
-		$group2 = Mango::factory('group',array(
-			'_id' => $group1->_id
-		))->load();
-		
-		$content .= Kohana::debug($group2->as_array());
+		$group1->reload();
 
+		$content .= Kohana::debug('no more relations', $group1->as_array());
+
+		$group1->delete();
 		$group2->delete();
 	}
 
@@ -431,9 +454,8 @@ class Controller_MangoDemo extends Controller_Template {
 				)
 			)
 		));
-		
+
 		// atomic counters are easy:
-		
 		$account->report['total']->increment();
 		$account->report['blog1']['views']->increment();
 
@@ -567,5 +589,60 @@ class Controller_MangoDemo extends Controller_Template {
 			echo Kohana::debug($blog->as_array());
 			$blog->delete();
 		}
+	}
+
+	public function action_demo12()
+	{
+		// Create blog
+		$blog = Mango::factory('blog', array(
+			'title'        => 'title1',
+			'text'         => 'text1',
+			'time_written' => time()
+		))->create();
+
+		// Unset a field
+		unset($blog->title);
+
+		echo Kohana::debug('Unset title',$blog->changed(true));
+
+		// Save
+		$blog->update();
+
+		// Reload blog
+		$blog->reload();
+
+		// Check if title is really missing
+		echo Kohana::debug('Title should be missing', $blog->as_array());
+
+		// Add 2 comments
+		$blog->add( Mango::factory('comment', array(
+			'name'    => 'Name1',
+			'comment' => 'Text1',
+			'time'    => time()
+		)));
+
+		$blog->add( Mango::factory('comment', array(
+			'name'    => 'Name2',
+			'comment' => 'Text2',
+			'time'    => time()
+		)));
+
+		// This should use pushAll
+		echo Kohana::debug('Adding comments using $pushAll', $blog->changed(TRUE));
+
+		$blog->update();
+		$blog->reload();
+
+		$blog->comments[0]->comment = 'New Text';
+
+		echo Kohana::debug('Update using array indices', $blog->changed(TRUE));
+
+		$blog->update();
+		$blog->reload();
+
+		echo Kohana::debug('New text in first comment', $blog->as_array());
+
+		// Clean up
+		$blog->delete();
 	}
 }
