@@ -376,7 +376,7 @@ class Controller_MangoDemo extends Controller_Template {
 
 		// Saved objects
 		// Here we want $modifiers
-		$content .= '<h1>Unsaved objects</h1>';
+		$content .= '<h1>Saved objects</h1>';
 
 		/* Counters */
 		$content.='<h2>counters</h2>';
@@ -459,15 +459,18 @@ class Controller_MangoDemo extends Controller_Template {
 		$account->report['total']->increment();
 		$account->report['blog1']['views']->increment();
 
-		$content .= Kohana::debug($account->changed(TRUE));
+		//$content .= Kohana::debug($account->changed(TRUE));
 		
 		// simulate changes were saved
 		$account->saved();
 		
-		// we can even add counters
-		$account->report['blog2'] = array('views'=>0,'comments'=>0);
+		// !! the following isn't necessary anymore - you can implicitely create counters
+		// from Mango_Arrays, even when they haven't been defined before !!
 
-		// and they are ready to use as counter
+		//$account->report['blog2'] = array('views'=>0,'comments'=>0);
+
+		// just create counters on the fly, no matter how deep and no matter
+		// if the fields haven't been defined and/or set to counter
 		$account->report['blog2']['views']->increment();
 
 		// also update an existing counter
