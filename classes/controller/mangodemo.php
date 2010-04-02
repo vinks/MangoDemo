@@ -579,6 +579,8 @@ class Controller_MangoDemo extends Controller_Template {
 		}
 
 		// Validating supplied fields only
+		// will not fail on required fields because it won't check those,
+		// it will fail however on the supplied and incorrect 'name' field of the first column
 		$data = array(
 			'title'        => 'Title',
 			'comments'     => array(
