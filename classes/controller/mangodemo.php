@@ -554,15 +554,52 @@ class Controller_MangoDemo extends Controller_Template {
 			)
 		);
 
+		// Validating full document
 		try
 		{
 			$data = $blog->check($data);
 
-			echo Kohana::debug('Validation success!',$data);
+			echo Kohana::debug('Full Validation success!',$data);
 		}
 		catch(Validate_Exception $e)
 		{
-			echo Kohana::debug('Validation failed', $e->model . ' (' . $e->seq .')', $e->array->errors());
+			echo Kohana::debug('Full Validation failed', $e->model . ' (' . $e->seq .')', $e->array->errors());
+		}
+
+		// Validating local document only
+		try
+		{
+			$data = $blog->check($data, Mango::CHECK_LOCAL);
+
+			echo Kohana::debug('Local Validation success!',$data);
+		}
+		catch(Validate_Exception $e)
+		{
+			echo Kohana::debug('Local Validation failed', $e->model . ' (' . $e->seq .')', $e->array->errors());
+		}
+
+		// Validating supplied fields only
+		$data = array(
+			'title'        => 'Title',
+			'comments'     => array(
+				array(
+					'name'    => 'N1', // this title will now fail the min_length = 4 rule
+				),
+				array(
+					'name'    => 'N2asa',
+				)
+			)
+		);
+
+		try
+		{
+			$data = $blog->check($data, Mango::CHECK_ONLY);
+
+			echo Kohana::debug('Only Validation success!',$data);
+		}
+		catch(Validate_Exception $e)
+		{
+			echo Kohana::debug('Only Validation failed', $e->model . ' (' . $e->seq .')', $e->array->errors());
 		}
 	}
 
