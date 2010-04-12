@@ -102,8 +102,8 @@ Other values for type_hint can be 'counter' (supports a (multidimensional) array
 	</tr>
 	<tr>
 		<td>set</td>
-		<td>Corresponds to a MongoDB array</td>
-		<td><pre>'views' => array('type'=>'set')</pre></td>
+		<td>Corresponds to a MongoDB array. This type has a separate attribute 'unique'. If set (to TRUE) it will take care that only unique values are added to the set</td>
+		<td><pre>'views' => array('type'=>'set', 'unique' => TRUE)</pre></td>
 	</tr>
 </table>
 
