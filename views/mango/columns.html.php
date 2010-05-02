@@ -13,7 +13,7 @@
 </table>
 
 <h3>Numeric types</h3>
-Numeric types support the optional 'min_value' and 'max_value' setting to indicate the minimum and maximum allowed value of the column. These values are used when setting (if the value is out of bounds, it is set to NULL) and when validating (if the value is out of bounds, the validation won't pass)
+Numeric types support the optional ‘min_value’ and ‘max_value’ setting to indicate the minimum and maximum allowed value of the column when validated.
 
 <table border=1>
 	<tr>
@@ -38,7 +38,7 @@ Numeric types support the optional 'min_value' and 'max_value' setting to indica
 	</tr>
 	<tr>
 		<td>String</td>
-		<td>A string value, with optional min_length and max_length settings, that are (like with numeric values) used when setting and validating</td>
+		<td>A string value, with optional min_length and max_length settings, that are (like with numeric values) used during validation</td>
 		<td><pre>'username' => array('type'=>'string','min_length'=>3,'max_length'=>10)</pre></td>
 	</tr>
 	<tr>
