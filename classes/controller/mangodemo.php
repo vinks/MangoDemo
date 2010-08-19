@@ -531,6 +531,9 @@ class Controller_MangoDemo extends Controller_Template {
 
 	public function action_demo10()
 	{
+		$this->template->bind('content',$content);
+		$content = '';
+		
 		$blog = Mango::factory('blog');
 
 		// Make some data invalid to see validation error
@@ -607,6 +610,9 @@ class Controller_MangoDemo extends Controller_Template {
 
 	public function action_demo11()
 	{
+		$this->template->bind('content',$content);
+		$content = '';
+		
 		// create 2 different blog entries with different titles
 		$blog1 = Mango::factory('blog', array(
 			'title'        => 'title1',
@@ -635,6 +641,9 @@ class Controller_MangoDemo extends Controller_Template {
 
 	public function action_demo12()
 	{
+		$this->template->bind('content',$content);
+		$content = '';
+		
 		// Create blog
 		$blog = Mango::factory('blog', array(
 			'title'        => 'title1',
