@@ -542,7 +542,7 @@ class Controller_MangoDemo extends Controller_Template {
 			'user_id'      => 12,
 			'comments'     => array(
 				array(
-					'name'    => 'N1', // this title will now fail the min_length = 4 rule
+					//'name'    => 'N1', // this title will now fail the min_length = 4 rule
 					'comment' => 'c1',
 					'time'    => time()
 				),
@@ -687,4 +687,44 @@ class Controller_MangoDemo extends Controller_Template {
 		// Clean up
 		$blog->delete();
 	}
+
+	public function action_demo13()
+	{
+		$user = Mango::factory('user', array(
+			'role'  => 'viewer',
+			'email' => 'a@b.nl'
+		))->create();
+
+		$group = Mango::factory('group', array(
+			'name' => 'wouter'
+		))->create();
+
+		$user->add($group,'circle');
+
+		echo Kohana::debug($user->changed(TRUE), $group->changed(TRUE));
+
+		$user->update();
+		$group->update();
+
+		$group->reload();
+		$user->reload();
+
+		foreach ( $group->users as $user)
+		{
+			echo Kohana::debug($user->as_array(FALSE));
+		}
+
+		foreach ( $user->circles as $circle)
+		{
+			echo Kohana::debug($circle->as_array(FALSE));
+		}
+
+		$group->remove($user);
+
+		echo Kohana::debug($user->changed(TRUE), $group->changed(TRUE));
+
+		$user->delete();
+		$group->delete();
+	}
+
 }

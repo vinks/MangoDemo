@@ -20,7 +20,7 @@ class Model_User extends Mango {
 	protected $_relations = array(
 		'account'    => array('type'=>'belongs_to'),
 		'blogs'      => array('type'=>'has_many'),
-		'groups'     => array('type'=>'has_and_belongs_to_many')
+		'circles'    => array('type'=>'has_and_belongs_to_many','model'=>'group')
 	);
 
 	protected $_db = 'demo'; //don't use default db config
