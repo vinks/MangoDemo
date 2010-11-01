@@ -25,6 +25,6 @@ class Model_Car extends Mango {
 	{
 		$this->car_type = $this->_car_type;
 
-		return parent::create();
+		return parent::create($safe);
 	}
 }
