@@ -7,7 +7,7 @@ class Model_Group extends Mango {
 	);
 
 	protected $_relations = array(
-		'users'      => array('type'=>'has_and_belongs_to_many','related_relation'=> 'circles')
+		'users' => array('type' => 'has_and_belongs_to_many')
 	);
 
 	protected $_db = 'demo'; //don't use default db config

@@ -2,12 +2,12 @@
 class Model_Account extends Mango {
 
 	protected $_fields = array(
-		'name'         => array(
-			'type'     => 'string',
-			'required' => TRUE,
-			'min_length' => 3,
-			'max_length' => 127,
-			'rules' => array(
+		'name'	=> array(
+			'type'		=> 'string',
+			'required'	=> TRUE,
+			'min_length'=> 3,
+			'max_length'=> 127,
+			'rules'		=> array(
 				'alpha_numeric' => NULL
 			)
 		),

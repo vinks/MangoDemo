@@ -2,74 +2,52 @@
 
 class Controller_MangoDemo extends Controller_Template {
 
-	public $template = 'mangoDemo.html';
-
-	public function action_index()
-	{
-		$this->template->content = View::factory('mango/intro.html');
-	}
-
-	public function action_demo0()
-	{
-		$this->template->content = View::factory('mango/columns.html');
-	}
-
 	public function action_demo1()
 	{
-		$this->template->bind('content',$content);
-		$content = '';
-
 		// creating empty account object
-		$account = Mango::factory('account',array(
+		$account = Mango::factory('account', array(
 			'name' => 'testaccount'
 		))->create();
-
-		$content .= Kohana::debug($account->as_array());
-
+		Fire::log($account->as_array(), 'ACCOUNT');
+		
 		// now we can use the ID to retrieve it from DB
 		$account2 = Mango::factory('account', array(
 			'_id' => $account->_id
 		))->load();
-
-		// this should be the same account
-		$content .= Kohana::debug($account2->as_array());
-
+		Fire::log($account2->as_array(), 'ACCOUNT 2');
+		
 		// Clean up
 		$account->delete();
 	}
-
+	
 	public function action_demo2()
 	{
-		$this->template->bind('content',$content);
-		$content = '';
-
 		// creating account
 		$account = Mango::factory('account',array(
 			'name' => 'testaccount'
 		))->create();
-
+		Fire::log($account->as_array(), 'ACCOUNT');
+		
 		// simulate $_POST object
 		$post = array(
-			'email'      => 'user@domain.com',
+			'email'      => 'user@user.com',
 			'role'       => 'manager',
 			'account_id' => $account->_id
 		);
-
+		
 		// create empty user object
 		$user = Mango::factory('user');
-
+		
 		try
 		{
-			// validate data
-			$post = $user->check($post);
-
 			// create user
-			$user
-				->values($post)
-				->create();
-
+			$user->values($post);
+			
+			if ($user->check())
+				$user->create();
+			
 			// show user
-			$content .= Kohana::debug($user->as_array());
+			Fire::log($user->as_array(), 'USER');
 
 			// load user by email
 			$user2 = Mango::factory('user',array(
@@ -77,60 +55,44 @@ class Controller_MangoDemo extends Controller_Template {
 			))->load();
 
 			// this should be the same
-			$content.= Kohana::debug($user2->as_array());
-
+			Fire::log($user2->as_array(), 'USER 2');
 			// you can access the account from the user object
-			$content .= Kohana::debug($user->account->as_array());
+			Fire::log($user->account->as_array(), 'USER ACCOUNT');
 
 			// and you can access the users from the account object
 			$users = $account->users;
-
-			$content .= Kohana::debug('account',$account->name,'has',$users->count(),'users');
+			Fire::log('account ' . $account->name . ' has ' . $users->count() .' users', 'DEBUG');
 		}
-		catch(Validate_Exception $e)
+		catch(Validation_Exception $e)
 		{
-			$content .= Kohana::debug($e->array->errors());
+			Fire::log($e->array->errors(), 'ERR');
 		}
-
-		// clean up (because account has_many users, the users will be removed too)
-		$account->delete();
 	}
-
+	
 	public function action_demo3()
 	{
-		$this->template->bind('content',$content);
-		$content = '';
-
 		// creating account
 		$account = Mango::factory('account',array(
 			'name' => 'testaccount'
 		))->create();
-
-		//echo Kohana::debug($account->some_counter); exit;
-
-		$content .= Kohana::debug($account->as_array());
+		Fire::log($account->as_array(), 'ACCOUNT');
 
 		// atomic update
 		$account->name = 'name2';
 		$account->some_counter->increment(5);
 		$account->update();
-
-		$content .= Kohana::debug($account->as_array());
+		Fire::log($account->as_array(), 'ACCOUNT atomic update');
 
 		// another update
 		$account->some_counter->increment();
 		$account->update();
-
-		$content .= Kohana::debug($account->as_array());
+		Fire::log($account->as_array(), 'ACCOUNT another update');
 
 		$account->delete();
 	}
-
+	
 	public function action_demo4()
 	{
-		$this->template->bind('content',$content);
-		$content = '';
-
 		// creating account
 		$account = Mango::factory('account',array(
 			'name' => 'testaccount'
@@ -186,38 +148,36 @@ class Controller_MangoDemo extends Controller_Template {
 		$blog->update();
 
 		// This will show the comments stored IN the blog object
-		$content .= Kohana::debug($blog->as_array());
+		Fire::log($blog->as_array(), 'blog');
 
 		// You can access the comments
 		// $blog->comments->as_array() is also possible
+		$i = 1;
 		foreach($blog->comments as $comment)
 		{
-			$content .= Kohana::debug($comment->as_array());
+			Fire::log($comment->as_array(), 'comment' . $i);
+			$i++;
 		}
 
 		// Reload
 		$blog2 = Mango::factory('blog', array(
 			'_id' => $blog->_id
 		))->load();
-
-		$content .= Kohana::debug($blog2->as_array());
+		Fire::log($blog2->as_array(), 'blog 2');
 
 		// Remove second comment
 		unset($blog2->comments[1]);
 
 		$blog2->update();
 
-		$content .= Kohana::debug($blog2->as_array());
+		Fire::log($blog2->as_array(), 'blog 2');
 
 		// Clean up
 		$account->delete();
 	}
-
+	
 	public function action_demo5()
 	{
-		$this->template->bind('content',$content);
-		$content = '';
-
 		// creating account
 		$account = Mango::factory('account',array(
 			'name' => 'testaccount'
@@ -255,8 +215,9 @@ class Controller_MangoDemo extends Controller_Template {
 		$user2->update();
 		$group1->update();
 		$group2->update();
-
-		$content .= Kohana::debug('two relations',$user1->as_array(),$group1->as_array());
+		
+		Fire::log($user1->as_array(), '$user1->as_array()');
+		Fire::log($group1->as_array(), '$group1->as_array()');
 
 		// delete group 2 - this should remove references from both users
 		$group2->delete();
@@ -264,7 +225,8 @@ class Controller_MangoDemo extends Controller_Template {
 		$user1->reload();
 		$user2->reload();
 
-		$content .= Kohana::debug('only one relation',$user1->as_array(),$user2->as_array());
+		Fire::log($user1->as_array(), '$user1->as_array()');
+		Fire::log($user2->as_array(), '$user2->as_array()');
 
 		// Clean up - this should delete account -> thereby both users
 		// and thereby clean user refs from group1
@@ -274,17 +236,14 @@ class Controller_MangoDemo extends Controller_Template {
 		// lets check if the relationship is gone too:
 		$group1->reload();
 
-		$content .= Kohana::debug('no more relations', $group1->as_array());
+		Fire::log($group1->as_array(), '$group1->as_array()');
 
 		$group1->delete();
 		$group2->delete();
 	}
-
+	
 	public function action_demo6()
 	{
-		$this->template->bind('content',$content);
-		$content = '';
-
 		// creating account
 		$account = Mango::factory('account',array(
 			'name' => 'testaccount'
@@ -299,18 +258,18 @@ class Controller_MangoDemo extends Controller_Template {
 		// this isn't (but is possible)
 		// $account->categories = array('cat1');
 		// $account->update();
-
-		$content .= Kohana::debug($account->as_array());
+		
+		Fire::log($account->as_array(), '$account->as_array()');
 
 		// try to push the same value
-		$account->categories[] = 'cat1'; 
-
-		echo Kohana::debug($account->as_array());
+		$account->categories[] = 'cat1';
+		
+		Fire::log($account->as_array(), 'try to push the same value cat1');
 
 		$account->categories[] = 'cat2';
 		$account->update();
 
-		$content .= Kohana::debug($account->as_array());
+		Fire::log($account->as_array(), 'push value cat2');
 
 		// atomic pull
 		$account->categories->pull('cat1');
@@ -318,130 +277,139 @@ class Controller_MangoDemo extends Controller_Template {
 		// unset($account->categories[ $account->categories->find('cat1') ]);
 		$account->update();
 
-		$content .= Kohana::debug($account->as_array());
+		Fire::log($account->as_array(), 'atomic pull cat1');
 
 		// Clean up
 		$account->delete();
 	}
-
+	
 	public function action_demo7()
 	{
-		$this->template->bind('content',$content);
-		$content = '';
+		/* Unsaved objects */
 		
-		// An unsaved object
-		// All actions should result in a save query without updates/modifiers (it is inserted into DB)
-		$content .= '<h1>Unsaved objects</h1>';
-
-		/* Counters */
-		$content.='<h2>counters</h2>';
+		// Counters
+		$table   = array();
+		$table[] = array('Account','Changed');
 		
 		$account = Mango::factory('account');
 		$account->some_counter->increment();
-		$content.=Kohana::debug($account->as_array(),$account->changed(FALSE)) . '<hr>';
-
+		$table[] = array($account->as_array(), $account->changed(FALSE));
+		
 		$account = Mango::factory('account');
 		$account->some_counter->decrement();
-		$content.=Kohana::debug($account->as_array(),$account->changed(FALSE)) . '<hr>';
-
+		$table[] = array($account->as_array(), $account->changed(FALSE));
+		
 		$account = Mango::factory('account');
 		$account->some_counter = 5;
-		$content.=Kohana::debug($account->as_array(),$account->changed(FALSE)) . '<hr>';
-
-		/* Sets */
-		$content.='<h2>sets</h2>';
-
+		$table[] = array($account->as_array(), $account->changed(FALSE));
+		
+		Fire::table('An unsaved object::Counters', $table);
+		
+		// Sets
+		$table   = array();
+		$table[] = array('Account','Changed');
+		
 		$account = Mango::factory('account');
 		$account->categories[] = 'cat1';
-		$content.=Kohana::debug($account->as_array(),$account->changed(FALSE)) . '<hr>';
-
+		$table[] = array($account->as_array(), $account->changed(FALSE));
+		
 		$account = Mango::factory('account');
 		$account->categories = array('cat1','cat2');
-		$content.=Kohana::debug($account->as_array(),$account->changed(FALSE)) . '<hr>';
-
-		/* Arrays */
-		$content.='<h2>arrays</h2>';
-
+		$table[] = array($account->as_array(), $account->changed(FALSE));
+		
+		Fire::table('An unsaved object::Sets', $table);
+		
+		// Arrays
+		$table   = array();
+		$table[] = array('Account','Changed');
+		
 		$account = Mango::factory('account');
 		$account->some_array[] = 'cat1';
-		$content.=Kohana::debug($account->as_array(),$account->changed(FALSE)) . '<hr>';
-
+		$table[] = array($account->as_array(), $account->changed(FALSE));
+		
 		$account = Mango::factory('account');
 		$account->some_array['key'] = 'cat1';
-		$content.=Kohana::debug($account->as_array(),$account->changed(FALSE)) . '<hr>';
-
+		$table[] = array($account->as_array(), $account->changed(FALSE));
+		
 		$account = Mango::factory('account');
 		$account->some_array = array('cat1','key'=>'bla');
-		$content.=Kohana::debug($account->as_array(),$account->changed(FALSE)) . '<hr>';
-
-		// Saved objects
-		// Here we want $modifiers
-		$content .= '<h1>Saved objects</h1>';
-
-		/* Counters */
-		$content.='<h2>counters</h2>';
+		$table[] = array($account->as_array(), $account->changed(FALSE));
+		
+		Fire::table('An unsaved object::Arrays', $table);
+		
+		
+		/* Saved objects */
+		
+		// Counters
+		$table   = array();
+		$table[] = array('Account','Changed');
 		
 		$account = Mango::factory('account');
 		$account->name = 'hello';
 		$account->create();
 		$account->some_counter->increment(); // this is atomic (uses $inc)
-		$content.=Kohana::debug($account->as_array(),$account->changed(TRUE)) . '<hr>';
+		$table[] = array($account->as_array(), $account->changed(TRUE));
 		$account->delete();
-
+		
 		$account = Mango::factory('account');
 		$account->name = 'hello';
 		$account->create();
 		$account->some_counter = 5; // this is NOT atomic (uses $set, not $inc)
-		$content.=Kohana::debug($account->as_array(),$account->changed(TRUE)) . '<hr>';
+		$table[] = array($account->as_array(), $account->changed(TRUE));
 		$account->delete();
 
-		/* Sets */
-		$content.='<h2>sets</h2>';
-
+		Fire::table('Saved objects::Counters', $table);
+		
+		// Sets
+		$table   = array();
+		$table[] = array('Account','Changed');
+		
 		$account = Mango::factory('account');
 		$account->name = 'hello';
 		$account->create();
 		$account->categories[] = 'cat1'; // this is atomic (uses $push)
-		$content.=Kohana::debug($account->as_array(),$account->changed(TRUE)) . '<hr>';
+		$table[] = array($account->as_array(), $account->changed(TRUE));
 		$account->delete();
 
 		$account = Mango::factory('account');
 		$account->name = 'hello';
 		$account->create();
 		$account->categories = array('cat1','cat2'); // this is not atomic - a full reset of the categories array
-		$content.=Kohana::debug($account->as_array(),$account->changed(TRUE)) . '<hr>';
+		$table[] = array($account->as_array(), $account->changed(TRUE));
 		$account->delete();
-
-		/* Arrays */
-		$content.='<h2>arrays</h2>';
-
+		
+		Fire::table('Saved objects::Sets', $table);
+		
+		// Arrays
+		$table   = array();
+		$table[] = array('Account','Changed');
+		
 		$account = Mango::factory('account');
 		$account->name = 'hello';
 		$account->create();
 		$account->some_array[] = 'bla';
-		$content.=Kohana::debug($account->as_array(),$account->changed(TRUE)) . '<hr>';
+		$table[] = array($account->as_array(), $account->changed(TRUE));
 		$account->delete();
 
 		$account = Mango::factory('account');
 		$account->name = 'hello';
 		$account->create();
 		$account->some_array['key'] = 'bla';
-		$content.=Kohana::debug($account->as_array(),$account->changed(TRUE)) . '<hr>';
+		$table[] = array($account->as_array(), $account->changed(TRUE));
 		$account->delete();
 
 		$account = Mango::factory('account');
 		$account->name = 'hello';
 		$account->create();
 		$account->some_array = array('key' => 'bla', 'blo');
-		$content.=Kohana::debug($account->as_array(),$account->changed(TRUE)) . '<hr>';
+		$table[] = array($account->as_array(), $account->changed(TRUE));
 		$account->delete();
+		
+		Fire::table('Saved objects::Arrays', $table);
 	}
-
+	
 	public function action_demo8()
 	{
-		$this->template->bind('content',$content);
-		$content = '';
-		
 		// let's simulate a load from DB
 		$account = Mango::factory('account')->values(array(
 			'_id'=>1,
@@ -460,10 +428,10 @@ class Controller_MangoDemo extends Controller_Template {
 		$account->report['blog1']['views']->increment();
 
 		//$content .= Kohana::debug($account->changed(TRUE));
-		
+
 		// simulate changes were saved
 		$account->saved();
-		
+
 		// !! the following isn't necessary anymore - you can implicitely create counters
 		// from Mango_Arrays, even when they haven't been defined before !!
 
@@ -475,8 +443,8 @@ class Controller_MangoDemo extends Controller_Template {
 
 		// also update an existing counter
 		$account->report['blog1']['views']->increment();
-
-		$content .= Kohana::debug($account->changed(TRUE));
+		
+		Fire::log($account->changed(TRUE), 'ACCOUNT CHANGED ACCOUNT');
 
 		// simulate save
 		$account->saved();
@@ -485,16 +453,13 @@ class Controller_MangoDemo extends Controller_Template {
 		$account->report['blog2']['views']->increment();
 
 		// and now it will inc
-		$content .= Kohana::debug($account->changed(TRUE));
+		Fire::log($account->changed(TRUE), 'ACCOUNT CHANGED ACCOUNT');
 	}
-
+	
 	public function action_demo9()
 	{
 		// Note: extension support is useful if you have different classes, that inherit
 		// from the same (base) class, but each have different additional columns.
-
-		$this->template->bind('content',$content);
-		$content = '';
 
 		// Create a Spyker car object
 		// We should have access to the Car_Model columns as well as the Spyker_Model columns
@@ -505,8 +470,9 @@ class Controller_MangoDemo extends Controller_Template {
 
 		// create
 		$car->create();
+		
+		Fire::log($car->as_array(), 'CAR spyker');
 
-		$content .= Kohana::debug($car->as_array());
 
 		// Now create another car
 		$car = Mango::factory('ferrari');
@@ -514,7 +480,7 @@ class Controller_MangoDemo extends Controller_Template {
 		$car->ferrari_data = 'world';
 		$car->create();
 
-		$content .= Kohana::debug($car->as_array());
+		Fire::log($car->as_array(), 'CAR ferrari');
 
 		// Now we have 2 cars saved in the cars collection, one ferrari, one spyker
 		// Let's check - note we use 'car' in the factory method, but we get a fully
@@ -522,18 +488,15 @@ class Controller_MangoDemo extends Controller_Template {
 		$cars = Mango::factory('car')->load(FALSE);
 		foreach($cars as $car)
 		{
-			$content .= Kohana::debug($car->as_array());
+			Fire::log($car->as_array(), 'CAR');
 
 			// clean up
 			$car->delete();
 		}
 	}
-
+	
 	public function action_demo10()
 	{
-		$this->template->bind('content',$content);
-		$content = '';
-		
 		$blog = Mango::factory('blog');
 
 		// Make some data invalid to see validation error
@@ -545,7 +508,7 @@ class Controller_MangoDemo extends Controller_Template {
 			'user_id'      => 12,
 			'comments'     => array(
 				array(
-					//'name'    => 'N1', // this title will now fail the min_length = 4 rule
+					//'name'    => 'N1asa', // this title will now fail the min_length = 4 rule
 					'comment' => 'c1',
 					'time'    => time()
 				),
@@ -560,25 +523,29 @@ class Controller_MangoDemo extends Controller_Template {
 		// Validating full document
 		try
 		{
-			$data = $blog->check($data);
-
-			echo Kohana::debug('Full Validation success!',$data);
+			$data1 = $blog->check($data);
+			Fire::log($data1, 'Full Validation success!');
 		}
-		catch(Validate_Exception $e)
+		catch(Validation_Exception $e)
 		{
-			echo Kohana::debug('Full Validation failed', $e->model . ' (' . $e->seq .')', $e->array->errors());
+			$table   = array();
+			$table[] = array('Model', 'Seq', 'Errors');
+			$table[] = array($e->model, $e->seq,  $e->array->errors());
+			Fire::table('Full Validation failed', $table);
 		}
 
 		// Validating local document only
 		try
 		{
-			$data = $blog->check($data, Mango::CHECK_LOCAL);
-
-			echo Kohana::debug('Local Validation success!',$data);
+			$data2 = $blog->check($data, Mango::CHECK_LOCAL);
+			Fire::log($data2, 'Local Validation success!');
 		}
-		catch(Validate_Exception $e)
+		catch(Validation_Exception $e)
 		{
-			echo Kohana::debug('Local Validation failed', $e->model . ' (' . $e->seq .')', $e->array->errors());
+			$table   = array();
+			$table[] = array('Model', 'Seq', 'Errors');
+			$table[] = array($e->model, $e->seq,  $e->array->errors());
+			Fire::table('Full Validation failed', $table);
 		}
 
 		// Validating supplied fields only
@@ -598,21 +565,20 @@ class Controller_MangoDemo extends Controller_Template {
 
 		try
 		{
-			$data = $blog->check($data, Mango::CHECK_ONLY);
-
-			echo Kohana::debug('Only Validation success!',$data);
+			$data1 = $blog->check($data, Mango::CHECK_ONLY);
+			Fire::log($data1, 'Only Validation success!');
 		}
-		catch(Validate_Exception $e)
+		catch(Validation_Exception $e)
 		{
-			echo Kohana::debug('Only Validation failed', $e->model . ' (' . $e->seq .')', $e->array->errors());
+			$table   = array();
+			$table[] = array('Model', 'Seq', 'Errors');
+			$table[] = array($e->model, $e->seq,  $e->array->errors());
+			Fire::table('Only Validation failed', $table);
 		}
 	}
 
 	public function action_demo11()
 	{
-		$this->template->bind('content',$content);
-		$content = '';
-		
 		// create 2 different blog entries with different titles
 		$blog1 = Mango::factory('blog', array(
 			'title'        => 'title1',
@@ -634,16 +600,13 @@ class Controller_MangoDemo extends Controller_Template {
 		// check and delete
 		foreach( Mango::factory('blog')->load(FALSE) as $blog)
 		{
-			echo Kohana::debug($blog->as_array());
+			Fire::log($blog->as_array(), 'BLOG');
 			$blog->delete();
 		}
 	}
 
 	public function action_demo12()
 	{
-		$this->template->bind('content',$content);
-		$content = '';
-		
 		// Create blog
 		$blog = Mango::factory('blog', array(
 			'title'        => 'title1',
@@ -654,7 +617,7 @@ class Controller_MangoDemo extends Controller_Template {
 		// Unset a field
 		unset($blog->title);
 
-		echo Kohana::debug('Unset title',$blog->changed(true));
+		Fire::log($blog->changed(true), 'Unset title');
 
 		// Save
 		$blog->update();
@@ -663,7 +626,7 @@ class Controller_MangoDemo extends Controller_Template {
 		$blog->reload();
 
 		// Check if title is really missing
-		echo Kohana::debug('Title should be missing', $blog->as_array());
+		Fire::log($blog->as_array(), 'Title should be missing');
 
 		// Add 2 comments
 		$blog->add( Mango::factory('comment', array(
@@ -679,24 +642,24 @@ class Controller_MangoDemo extends Controller_Template {
 		)));
 
 		// This should use pushAll
-		echo Kohana::debug('Adding comments using $pushAll', $blog->changed(TRUE));
+		Fire::log($blog->changed(TRUE), 'Adding comments using $pushAll');
 
 		$blog->update();
 		$blog->reload();
 
 		$blog->comments[0]->comment = 'New Text';
 
-		echo Kohana::debug('Update using array indices', $blog->changed(TRUE));
+		Fire::log($blog->changed(TRUE), 'Update using array indices');
 
 		$blog->update();
 		$blog->reload();
 
-		echo Kohana::debug('New text in first comment', $blog->as_array());
+		Fire::log($blog->changed(TRUE), 'New text in first comment');
 
 		// Clean up
 		$blog->delete();
 	}
-
+	
 	public function action_demo13()
 	{
 		$user = Mango::factory('user', array(
@@ -710,7 +673,8 @@ class Controller_MangoDemo extends Controller_Template {
 
 		$user->add($group,'circle');
 
-		echo Kohana::debug($user->changed(TRUE), $group->changed(TRUE));
+		Fire::log($user->changed(TRUE), 'USER CHANGED');
+		Fire::log($group->changed(TRUE), 'GROUP CHANGED');
 
 		$user->update();
 		$group->update();
@@ -720,20 +684,20 @@ class Controller_MangoDemo extends Controller_Template {
 
 		foreach ( $group->users as $user)
 		{
-			echo Kohana::debug($user->as_array(FALSE));
+			Fire::log($user->as_array(FALSE), 'USER');
 		}
 
-		foreach ( $user->circles as $circle)
+		foreach ( $user->groups as $group)
 		{
-			echo Kohana::debug($circle->as_array(FALSE));
+			Fire::log($group->as_array(FALSE), 'GROUP');
 		}
 
 		$group->remove($user);
-
-		echo Kohana::debug($user->changed(TRUE), $group->changed(TRUE));
+		
+		Fire::log($user->changed(TRUE), 'USER CHANGED');
+		Fire::log($group->changed(TRUE), 'GROUP CHANGED');
 
 		$user->delete();
 		$group->delete();
 	}
-
 }
